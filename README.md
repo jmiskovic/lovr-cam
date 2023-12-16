@@ -2,9 +2,7 @@
 
 Tiny orbiting camera module for [LÖVR](https://github.com/bjornbytes/lovr).
 
-To use:
-* make sure to disable the headset camera in `conf.lua` file: `t.modules.headset = false`
-* place `require('cam').integrate()` at the end of your `main.lua` file
+To use, simply place `require('cam').integrate()` at the end of your `main.lua` file. More advanced usage example is included.
 
 Mouse controls:
 * left click + drag - orbit camera around the center
