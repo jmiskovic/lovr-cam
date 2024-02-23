@@ -7,7 +7,7 @@ m.upvector = Vec3(0, 1, 0)
 m.position = Vec3(0, 3, 4)
 m.center = Vec3(0, 0, 0)
 
-m.zoom_speed = 0.2
+m.zoom_speed = 1.0
 m.orbit_speed = 1.0
 m.pan_speed = 1.0
 
@@ -57,22 +57,26 @@ m.resize(lovr.system.getWindowDimensions())
 
 -- should be called from lovr.mousemoved()
 function m.mousemoved(x, y, dx, dy)
-  if lovr.system.isMouseDown(1) then
-    m.nudge(m.orbit_speed * 0.004 * dx, m.orbit_speed * 0.004 * -dy, 0)
-  elseif  lovr.system.isMouseDown(3) then
-    local view = mat4(m.pose):invert()
-    local camera_right   = vec3(view[1], view[5], view[9])
-    local camera_forward = vec3(view[2],       0, view[10]):normalize()
-    m.center:add(camera_right   * (m.pan_speed * 0.01 * -dx))
-    m.center:add(camera_forward * (m.pan_speed * 0.01 * dy))
+  if  lovr.system.isMouseDown(3) then
+    if lovr.system.isMouseDown(1) then
+      m.center.y = m.center.y + m.pan_speed * 0.01 * dy
+    else
+      local view = mat4(m.pose):invert()
+      local camera_right   = vec3(view[1], view[5], view[9])
+      local camera_forward = vec3(view[2],       0, view[10]):normalize()
+      m.center:add(camera_right   * (m.pan_speed * 0.005 * -dx))
+      m.center:add(camera_forward * (m.pan_speed * 0.005 * dy))
+    end
     m.nudge()
+  elseif lovr.system.isMouseDown(1) then
+    m.nudge(m.orbit_speed * 0.0025 * dx, m.orbit_speed * 0.0025 * -dy, 0)
   end
 end
 
 
 -- should be called from lovr.wheelmoved()
 function m.wheelmoved(dx, dy)
-  m.nudge(0, 0, -dy * m.zoom_speed)
+  m.nudge(0, 0, -dy * m.zoom_speed * 0.12)
 end
 
 
