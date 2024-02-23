@@ -1,6 +1,7 @@
 local cam = require'cam'
 
-cam.polar_lower = math.pi / 2        -- set limits
+-- set limits
+cam.polar_lower = math.pi / 2
 cam.polar_upper = 0.3
 -- see the cam.lua for other limits and speed settings to configure
 
@@ -9,14 +10,13 @@ function lovr.update(dt)
   -- apply relative motion to camera
   -- note that user controls still work alongside with this scripted control
   cam.nudge(
-    dt * .2,                         -- orbit clockwise around center at constant speed
-    0.003  * math.sin(t),        -- bob up and down
-    0.01 * math.sin(-t))             -- zoom in and out
+    0.2 * dt,                    -- orbit clockwise around center at constant speed
+    0.003 * math.sin(t),         -- bob up and down
+    0.01 * math.sin(-t))         -- zoom in and out
 end
 
-function lovr.draw(pass)
-  cam.setCamera(pass)
 
+function lovr.draw(pass)
   -- an example scene for testing camera controls
   pass:setColor(0x75507b)
   pass:box(0, 0.5, 0, 1)
@@ -29,9 +29,7 @@ function lovr.draw(pass)
     for z = -tiles, tiles, 2 do
       local shade = math.exp(-0.05 * (x^2 + z^2))
       pass:setColor(shade * 0.5, shade * 0.8, shade * 0.7)
-      --pass:box(x, -0.1, z,  1.8, 0.2, 1.8)
       pass:roundrect(x, -0.05, z,  1.8, 1.8, 0.1, math.pi / 2, 1,0,0, 0.2)
-
     end
   end
   pass:setColor(1,1,1)
@@ -61,17 +59,25 @@ function lovr.draw(pass)
   pass:torus(0, 1.28, 0, 0.75, 0.3, math.pi/2, 1,0,0, 14, 7)
 end
 
+cam.integrate()     -- a shortcut for quick and dirty activation of orbit camera
+-- for a 'proper' integration into user's project, you would forward the callbacks yourself:
+
+--[[
+function lovr.draw(pass)
+  cam.setCamera(pass)      -- first action, before drawing the scene
+end
+
 function lovr.resize(width, height)
   cam.resize(width, height)
 end
+
 
 function lovr.mousemoved(x, y, dx, dy)
   cam.mousemoved(x, y, dx, dy)
 end
 
+
 function lovr.wheelmoved(dx, dy)
   cam.wheelmoved(dx, dy)
 end
-
-
--- cam.integrate()
+--]]
